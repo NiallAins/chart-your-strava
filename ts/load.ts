@@ -39,7 +39,7 @@ async function attemptLoadData(attemptAfterFetch: boolean = false) {
         attemptLoadData(true);
     } else {
         setTimeout(
-            () => setStatus("Your data can't be loaded, due to a permissions issue with your Strava account"),
+            () => setStatus("Your data can't be loaded due to a permissions issue with your Strava account"),
             1000
         );
     }
@@ -71,13 +71,20 @@ async function getAccessToken() {
     }
 }
 
-async function loadData(accessToken: string) {
-    setStatus('0 activites loaded...');
-    
+async function loadData(accessToken: string) {    
     let
         acts: Datum[] = [],
         page = 1,
         dataError = false;
+
+    setTimeout(
+        () => {
+            if (acts.length == 0 && !dataError) {
+                setStatus(`0 activites loaded...`)
+            }
+        },
+        500
+    );
     
     while (page <= MAX_ACTS / PER_PAGE) {
         await fetch(
@@ -113,9 +120,9 @@ async function loadData(accessToken: string) {
                     page = MAX_ACTS;
                 }
             } catch (err) {
-                console.log('Error:', err);
-                console.log('Sucessful requests:', acts)
-                console.log('Failed requests:', data);
+                console.warn('Sucessful requests:', acts)
+                console.error('Error:', err);
+                console.error('Failed requests:', data);
                 dataError = true;
                 page = MAX_ACTS;
             }
@@ -127,8 +134,8 @@ async function loadData(accessToken: string) {
     
     setStatus(
         dataError
-            ? "Your data can't be loaded, due to an issue with the Strava API"
-            : (page * PER_PAGE) + ' activites loaded successfully'
+            ? "Your data can't be loaded due to an issue with the Strava API"
+            : acts.length + ' activites loaded successfully'
     );
     setData(acts);
 }
