@@ -1,17 +1,24 @@
-import { render as renderPoster } from "./poster.js";
-import { render as renderChart } from "./chart.js";
+import { render as renderroutes } from "./routes.js";
+import { render as renderCharts } from "./charts.js";
 import { checkNewData } from "./data.js";
 import { init as initLoader } from "./load.js";
 const EL_TAB_BUTTONS = [
-    document.getElementById('tabButton_poster'),
-    document.getElementById('tabButton_chart'),
+    document.getElementById('tabButton_routes'),
+    document.getElementById('tabButton_charts'),
     document.getElementById('tabButton_load')
 ], EL_TAB_BODIES = [
-    document.getElementById('tabBody_poster'),
-    document.getElementById('tabBody_chart'),
+    document.getElementById('tabBody_routes'),
+    document.getElementById('tabBody_charts'),
     document.getElementById('tabBody_load')
 ];
 let resizeDebounce = -1;
+function init() {
+    const AUTH_REDIRECT = !!window.location.href.match('code=');
+    window.onresize = () => render();
+    initTabs();
+    setTab(AUTH_REDIRECT ? 2 : 0);
+    initLoader(EL_TAB_BODIES[2], AUTH_REDIRECT);
+}
 function initTabs() {
     EL_TAB_BUTTONS.forEach((b, bi) => {
         b.onclick = () => setTab(bi);
@@ -39,13 +46,10 @@ function setTab(ti) {
 }
 function render() {
     if (resizeDebounce === -1) {
-        renderPoster(EL_TAB_BODIES[0]);
-        renderChart(EL_TAB_BODIES[1]);
+        renderroutes(EL_TAB_BODIES[0]);
+        renderCharts(EL_TAB_BODIES[1]);
     }
     clearTimeout(resizeDebounce);
     resizeDebounce = setTimeout(() => resizeDebounce = -1, 500);
 }
-window.onresize = render;
-initTabs();
-initLoader(EL_TAB_BODIES[2]);
-setTab(window.location.href.match('code=') ? 2 : 0);
+init();

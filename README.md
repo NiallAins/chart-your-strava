@@ -1,4 +1,4 @@
-# Chart your Strava
+# Charts your Strava
 
 Various data visualisations based on the Strava API.
 

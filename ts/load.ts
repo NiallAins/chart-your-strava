@@ -16,12 +16,17 @@ const
     EL_BUTTON = document.createElement('button'),
     EL_STATUS = document.createElement('div');
 
-export function init(parentEl: HTMLElement) {
+export function init(parentEl: HTMLElement, isAuthRedirect: boolean = false) {
     EL_BUTTON.classList.add('load__button');
+    EL_STATUS.classList.add('load__status');
     EL_BUTTON.innerText = 'Load activities';
     EL_BUTTON.onclick = () => attemptLoadData();
     parentEl.appendChild(EL_BUTTON);
     parentEl.appendChild(EL_STATUS);
+
+    if (isAuthRedirect) {
+        attemptLoadData();
+    }
 }
 
 async function attemptLoadData(attemptAfterFetch: boolean = false) {
@@ -33,7 +38,10 @@ async function attemptLoadData(attemptAfterFetch: boolean = false) {
         await getAccessToken();
         attemptLoadData(true);
     } else {
-        console.error('Token request failed');
+        setTimeout(
+            () => setStatus("Your data can't be loaded, due to a permissions issue with your Strava account"),
+            1000
+        );
     }
 }
 
@@ -64,27 +72,26 @@ async function getAccessToken() {
 }
 
 async function loadData(accessToken: string) {
-    EL_STATUS.innerText = '0 activites loaded...';
+    setStatus('0 activites loaded...');
     
     let
         acts: Datum[] = [],
-        page = 1;   
+        page = 1,
+        dataError = false;
     
     while (page <= MAX_ACTS / PER_PAGE) {
         await fetch(
             'https://www.strava.com/api/v3/athlete/activities?' +
-            '&per_page=' + PER_PAGE +
-            '&page=' + page +
-            '&access_token=' + accessToken,
+                '&per_page=' + PER_PAGE +
+                '&page=' + page +
+                '&access_token=' + accessToken,
             {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${ accessToken }`
-                }
+                method: 'GET'
             }
         )
         .then(resp => resp.json())
         .then(data => {
+            try {
                 acts = [
                     ...acts,
                     ...data.map((act: StravaActivity) => ({
@@ -98,60 +105,84 @@ async function loadData(accessToken: string) {
                         sm: act.max_speed,
                         h:  act.average_heartrate,
                         hm: act.max_heartrate,
-                        p:  transcodePath(act.map.summary_polyline),
+                        p:  transcodePath(act.map?.summary_polyline),
                         e:  [act.elev_low, act.elev_high, act.total_elevation_gain]
                     }))
                 ];
-            if (new Date(data[data.length - 1].start_date_local).valueOf() < MIN_DATE) {
+                if (new Date(data[data.length - 1].start_date_local).valueOf() < MIN_DATE) {
+                    page = MAX_ACTS;
+                }
+            } catch (err) {
+                console.log('Error:', err);
+                console.log('Sucessful requests:', acts)
+                console.log('Failed requests:', data);
+                dataError = true;
                 page = MAX_ACTS;
             }
         });
         
-        EL_STATUS.innerText = (page * PER_PAGE) + ' activites loaded...';
+        setStatus((page * PER_PAGE) + ' activites loaded...');
         page += 1;
     }
     
-    EL_STATUS.innerText = (page * PER_PAGE) + ' activites loaded successfully';
+    setStatus(
+        dataError
+            ? "Your data can't be loaded, due to an issue with the Strava API"
+            : (page * PER_PAGE) + ' activites loaded successfully'
+    );
     setData(acts);
 }
 
-function transcodePath(encoded: string): string {
-    var
-        points: [number, number][] = [],
-        index = 0,
-        len = encoded.length,
-        lat = 0,
-        lng = 0;
-    while (index < len) {
-        var b, shift = 0, result = 0;
-        do {
-            b = encoded.charAt(index++).charCodeAt(0) - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
-        var dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-        lat += dlat;
-        shift = 0;
-        result = 0;
-        do {
-            b = encoded.charAt(index++).charCodeAt(0) - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
-        var dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-        lng += dlng;
-        points.push([lat, lng]);
+function transcodePath(encoded?: string): string {
+    if (!encoded) {
+        return '';
     }
-    return points
-        .map((p, i) => {
-            if (i === 0) {
-                return p[0] + ',' + p[1];
-            }
-            return (p[0] - points[i - 1][0]) + ',' + (p[1] - points[i - 1][1]);
-        })
-        .join(';');
+
+    try {
+        var
+            points: [number, number][] = [],
+            index = 0,
+            len = encoded.length,
+            lat = 0,
+            lng = 0;
+        while (index < len) {
+            var b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++).charCodeAt(0) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            var dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++).charCodeAt(0) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            var dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+            points.push([lat, lng]);
+        }
+        return points
+            .map((p, i) => {
+                if (i === 0) {
+                    return p[0] + ',' + p[1];
+                }
+                return (p[0] - points[i - 1][0]) + ',' + (p[1] - points[i - 1][1]);
+            })
+            .join(';');
+    } catch (err) {
+        console.error('Path encoding error:', encoded, err);
+        return '';
+    }
 }
 
 function toPage(p: string): string {
     return String.fromCharCode(parseInt(p) - PER_PAGE);
+}
+
+function setStatus(status: string) {
+    EL_STATUS.innerHTML = status;
 }

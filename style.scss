@@ -96,10 +96,10 @@ body {
 
 
 //
-//  Poster
+//  routes
 //
 
-.poster {
+.routes {
     display: flex;
     flex-wrap: wrap;
     margin: 0;
@@ -122,14 +122,14 @@ body {
 //  Chart
 //
 
-.chart {
-    $chart-h-label: 7 * $w-pad-lg;
-    $chart-w-label-min: $w-pad-md;
-    $chart-w-scroll: $w-pad-md;
-    $chart-z-bar: 0;
-    $chart-z-canvas: 10;
-    $chart-z-bar-hover: 20;
-    $chart-z-detail: 30;
+.charts {
+    $charts-h-label: 7 * $w-pad-lg;
+    $charts-w-label-min: $w-pad-md;
+    $charts-w-scroll: $w-pad-md;
+    $charts-z-bar: 0;
+    $charts-z-canvas: 10;
+    $charts-z-bar-hover: 20;
+    $charts-z-detail: 30;
 
     position: relative;
     width: calc(100% - #{ $w-pad-lg * 2 });
@@ -141,8 +141,8 @@ body {
         overflow-y: hidden;
 
         &::-webkit-scrollbar {
-            width: $chart-w-scroll;
-            height: $chart-w-scroll;
+            width: $charts-w-scroll;
+            height: $charts-w-scroll;
         }
         
         &::-webkit-scrollbar-track {
@@ -150,7 +150,7 @@ body {
         }
         
         &::-webkit-scrollbar-thumb {
-            border-radius: $chart-w-scroll * 0.5;
+            border-radius: $charts-w-scroll * 0.5;
             background: $c-bg-secondary;
 
             &:hover {
@@ -163,7 +163,7 @@ body {
         position: absolute;
         top: 50%;
         left: 50%;
-        z-index: $chart-z-canvas;
+        z-index: $charts-z-canvas;
         transform: translate(-50%, -50%);
         opacity: 0.5;
         pointer-events: none;
@@ -171,7 +171,7 @@ body {
 
     &__marks {
         position: absolute;
-        inset: 0 0 #{ $chart-h-label + $chart-w-scroll } 0;
+        inset: 0 0 #{ $charts-h-label + $charts-w-scroll } 0;
 
         &-y {
             position: absolute;
@@ -189,17 +189,17 @@ body {
 
     &__bars {
         display: flex;
-        height: calc(100% - #{ $chart-h-label });
-        padding-bottom: $chart-h-label;
+        height: calc(100% - #{ $charts-h-label });
+        padding-bottom: $charts-h-label;
         
         &-bar {
             position: relative;
-            z-index: $chart-z-bar;
-            min-width: $chart-w-label-min;
+            z-index: $charts-z-bar;
+            min-width: $charts-w-label-min;
             height: 100%;
 
             &:hover {
-                z-index: $chart-z-bar-hover;
+                z-index: $charts-z-bar-hover;
                 transform: scaleX(1.5);
                 transform-origin: 50% 100%;
             }
@@ -211,13 +211,13 @@ body {
 
     &__label {
         position: absolute;
-        left: calc(50% - #{ $chart-w-label-min * 0.5 });
+        left: calc(50% - #{ $charts-w-label-min * 0.5 });
         bottom: -1 * $w-pad-lg;
-        width: $chart-h-label;
-        line-height: $chart-w-label-min;
+        width: $charts-h-label;
+        line-height: $charts-w-label-min;
         transform: rotate(60deg);
-        transform-origin: $chart-w-label-min * 0.5;
-        font-size: $chart-w-label-min;
+        transform-origin: $charts-w-label-min * 0.5;
+        font-size: $charts-w-label-min;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -234,7 +234,7 @@ body {
         position: absolute;
         top: 0;
         left: 0;
-        z-index: $chart-z-detail;
+        z-index: $charts-z-detail;
         display: flex;
         flex-direction: column;
         width: fit-content;
@@ -256,5 +256,34 @@ body {
 //
 
 .load {
+    display: flex;
+    max-width: 15rem;
+    flex-direction: column;
+    gap: $w-pad-lg;
+    align-items: center;
 
+    &__button {
+        color: inherit;
+        font-size: inherit;
+        font-family: inherit;
+        background: none;
+        border: 1px solid $c-border;
+        padding: $w-pad-sm $w-pad-lg;
+        margin-top: $w-pad-lg;
+
+        &:hover {
+            border-color: $c-accent;
+            box-shadow:
+                inset 0 0 0 1px $c-accent,
+                0 0 0 1px $c-accent;
+            cursor: pointer;
+        }
+    }
+
+    &__status {
+        text-align: center;
+        margin: $w-pad-lg $w-pad-md;
+        font-size: $f-size-lg;
+        line-height: $f-size-lg;
+    }
 }

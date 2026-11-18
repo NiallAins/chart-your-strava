@@ -12,13 +12,13 @@ export function render(parentEl: HTMLElement) {
     const
         CAN = document.createElement('canvas'),
         CTX = CAN.getContext('2d')!;
-    CAN.classList.add('chart__canvas');
+    CAN.classList.add('charts__canvas');
 
     const
         EL_CONTAINER = document.createElement('div'),
         EL_DETAIL = document.createElement('div');
-    EL_CONTAINER.classList.add('chart__container');
-    EL_DETAIL.classList.add('chart__detail');
+    EL_CONTAINER.classList.add('charts__container');
+    EL_DETAIL.classList.add('charts__detail');
 
     const
         RUN_DATA = loadData(),
@@ -65,12 +65,12 @@ function addBarGraph(
         getY = (y: number) => ((y - MIN_Y) / (MAX_Y - MIN_Y)) * FULL_WIDTH;
 
     parentEl.innerHTML += `
-        <div class="chart__marks">
+        <div class="charts__marks">
             ${
                 yMarks
                     .map(y => `
                         <span
-                            class="chart__marks-y"
+                            class="charts__marks-y"
                             style="bottom: ${ getY(y[0]) }%"
                         >${
                             y[1]
@@ -82,13 +82,13 @@ function addBarGraph(
     `;
 
     const EL_BAR_CONTAINER = document.createElement('div');
-    EL_BAR_CONTAINER.classList.add('chart__bars');
+    EL_BAR_CONTAINER.classList.add('charts__bars');
     data.forEach((d, di) => {
         const EL_BAR = document.createElement('div');
-        EL_BAR.classList.add('chart__bars-bar');
+        EL_BAR.classList.add('charts__bars-bar');
         EL_BAR.style.width = WIDTH + '%';
         EL_BAR.style.background = `linear-gradient(#0000 ${ 100 - getY(d.y) }%, ${ d.c } 0)`;
-        EL_BAR.innerHTML = `<span class="chart__label">${ d.n }</span>`;
+        EL_BAR.innerHTML = `<span class="charts__label">${ d.n }</span>`;
         EL_BAR.onmouseover = () => hoverCb(di);
         EL_BAR.onmouseleave = unhoverCb;
         EL_BAR_CONTAINER.appendChild(EL_BAR);
@@ -128,7 +128,7 @@ function focusEntry(datum: Datum, intensityLimits: [number, number], detailEl: H
         ];
 
     detailEl.innerHTML = `
-        <span class="chart__detail-title">
+        <span class="charts__detail-title">
             ${ datum.n || 'Activity' }
         </span>
         ${
