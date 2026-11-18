@@ -1,9 +1,9 @@
 import { setData } from "./data.js";
-const CLIENT_ID = '64979', PAGE_IDS = [
-    '11912812512113013611513512111913412113608107307607707',
-    '40741210700730690731220760760730710700771220681190701',
-    '17069075077118075072069119075117075075068122121070068120'
-], PROJECT_URL = 'https://nialldesign.dev/chart-your-strava', PER_PAGE = 50, MAX_ACTS = 500, MIN_DATE = new Date().valueOf() - (1000 * 60 * 60 * 24 * 365 * 10), EL_BUTTON = document.createElement('button'), EL_STATUS = document.createElement('div');
+const CLIENT_ID = '64979', STORAGE_KEY_TOKEN = 'stravaAccessToken', PAGE_IDS = [
+    '149158155151160166145165151149164151166111103106107104',
+    '104151100103099103152106106103101100107152098149100147',
+    '099105107148105102099149105147105105098152151100098150'
+], PROJECT_URL = 'https://niallains.github.io/chart-your-strava', PER_PAGE = 50, MAX_ACTS = 500, MIN_DATE = new Date().valueOf() - (1000 * 60 * 60 * 24 * 365 * 10), EL_BUTTON = document.createElement('button'), EL_STATUS = document.createElement('div');
 export function init(parentEl) {
     EL_BUTTON.classList.add('load__button');
     EL_BUTTON.innerText = 'Load activities';
@@ -11,26 +11,26 @@ export function init(parentEl) {
     parentEl.appendChild(EL_BUTTON);
     parentEl.appendChild(EL_STATUS);
 }
-async function attemptLoadData() {
-    const TOKEN = sessionStorage.getItem('stravaAccessToken');
+async function attemptLoadData(attemptAfterFetch = false) {
+    const TOKEN = sessionStorage.getItem(STORAGE_KEY_TOKEN);
     if (TOKEN && TOKEN !== 'undefined') {
         loadData(TOKEN);
     }
+    else if (!attemptAfterFetch) {
+        await getAccessToken();
+        attemptLoadData(true);
+    }
     else {
-        await setAccessToken();
-        // attemptLoadData();
+        console.error('Token request failed');
     }
 }
 // Get Strava auth access token
-async function setAccessToken() {
-    const AUTH_CODE = 'a8525f372a562a291d940fd9dd5066335be99902'; //(window.location.href.match(/code=([^&]*)(&|$)/) || ['', ''])[1];
-    console.log(PAGE_IDS.join('').match(/.{3}/g).map(i => toPage(i)).join(''));
+async function getAccessToken() {
+    const AUTH_CODE = (window.location.href.match(/code=([^&]*)(&|$)/) || ['', ''])[1];
     if (AUTH_CODE) {
-        await fetch(`https://www.strava.com/oauth/token?client_id=${CLIENT_ID}&${
-        // 'client_secret=58966e2515f885329f0c2a179b741c7a770fe20d'
-        PAGE_IDS.join('').match(/.{3}/g).map(i => toPage(i)).join('')}&code=${AUTH_CODE}&grant_type=authorization_code`, { method: 'POST' })
+        await fetch(`https://www.strava.com/oauth/token?client_id=${CLIENT_ID}&${PAGE_IDS.join('').match(/.{3}/g).map(i => toPage(i)).join('')}&code=${AUTH_CODE}&grant_type=authorization_code`, { method: 'POST' })
             .then(resp => resp.json())
-            .then(data => sessionStorage.setItem('stravaAccessToken', data.access_token));
+            .then(data => sessionStorage.setItem(STORAGE_KEY_TOKEN, data.access_token));
     }
     else {
         window.location.href =
@@ -44,9 +44,10 @@ async function loadData(accessToken) {
     EL_STATUS.innerText = '0 activites loaded...';
     let acts = [], page = 1;
     while (page <= MAX_ACTS / PER_PAGE) {
-        await fetch('https://www.strava.com/api/v3/athlete', // /activities?' +
-        // '&per_page=' + PER_PAGE + '&page=' + page,
-        {
+        await fetch('https://www.strava.com/api/v3/athlete/activities?' +
+            '&per_page=' + PER_PAGE +
+            '&page=' + page +
+            '&access_token=' + accessToken, {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${accessToken}`
@@ -113,5 +114,5 @@ function transcodePath(encoded) {
         .join(';');
 }
 function toPage(p) {
-    return String.fromCharCode(parseInt(p) + PER_PAGE);
+    return String.fromCharCode(parseInt(p) - PER_PAGE);
 }

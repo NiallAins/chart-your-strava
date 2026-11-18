@@ -56,4 +56,4 @@ function render() {
 window.onresize = render;
 initTabs();
 initLoader(EL_TAB_BODIES[2]);
-setTab(0);
+setTab(window.location.href.match('code=') ? 2 : 0);
