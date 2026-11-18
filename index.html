@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta -->
+    <title>
+        Chart your Strava
+    </title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    />
+
+    <!-- Styles -->
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    />
+</head>
+
+<body>
+    <div class="tabs">
+        <button
+            id="tabButton_poster"
+            class="tabs__tab"
+            role="tab"
+            aria-controls="tabBody_poster"
+        >
+            Routes
+        </button>
+        <button
+            id="tabButton_chart"
+            class="tabs__tab"
+            role="tab"
+            aria-controls="tabBody_chart"
+        >
+            Charts
+        </button>
+        <button
+            id="tabButton_load"
+            class="tabs__tab"
+            role="tab"
+            aria-controls="tabBody_load"
+        >
+            Load your data
+        </button>
+    </div>
+
+    <div
+        id="tabBody_poster"
+        class="tabs__body poster"
+        role="tabpanel"
+        tabindex="0"
+        aria-labelledby="tabButton_poster"
+    ></div>
+    <div
+        id="tabBody_chart"
+        class="tabs__body chart"
+        role="tabpanel"
+        tabindex="0"
+        aria-labelledby="tabButton_chart"
+    ></div>
+    <div
+        id="tabBody_load"
+        class="tabs__body load"
+        role="tabpanel"
+        tabindex="0"
+        aria-labelledby="tabButton_load"
+    ></div>
+
+    <script
+        type="module"
+        src="./js/main.js"
+    ></script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "esnext",
+        "lib": ["es2019", "dom", "dom.iterable"],
+        "allowJs": true,
+        "strict": true,
+        "noImplicitReturns": true,
+        "outDir": "./js",
+        "rootDir": "./ts"
+    }
+}
