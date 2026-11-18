@@ -45,7 +45,7 @@ async function getAccessToken() {
     }
 }
 async function loadData(accessToken) {
-    let acts = [], page = 1, dataError = false;
+    let acts = [], page = 1, dataError = false, inactiveError = false;
     setTimeout(() => {
         if (acts.length == 0 && !dataError) {
             setStatus(`0 activites loaded...`);
@@ -87,15 +87,18 @@ async function loadData(accessToken) {
                 console.error('Error:', err);
                 console.error('Failed requests:', data);
                 dataError = true;
+                inactiveError = data.errors[0].code === 'Inactive';
                 page = MAX_ACTS;
             }
         });
         setStatus((page * PER_PAGE) + ' activites loaded...');
         page += 1;
     }
-    setStatus(dataError
-        ? "Your data can't be loaded due to an issue with the Strava API"
-        : acts.length + ' activites loaded successfully');
+    setStatus(inactiveError
+        ? `Your data can't be loaded due to <a class="load__link" href="https://techcrunch.com/2026/06/01/strava-declares-war-on-scrapers-ahead-of-ipo/> the ongoing death of the open internet </a>"`
+        : dataError
+            ? "Your data can't be loaded due to an issue with the Strava API"
+            : acts.length + ' activites loaded successfully');
     setData(acts);
 }
 function transcodePath(encoded) {

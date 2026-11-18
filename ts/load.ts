@@ -23,7 +23,7 @@ export function init(parentEl: HTMLElement, isAuthRedirect: boolean = false) {
     EL_BUTTON.onclick = () => attemptLoadData();
     parentEl.appendChild(EL_BUTTON);
     parentEl.appendChild(EL_STATUS);
-
+    
     if (isAuthRedirect) {
         attemptLoadData();
     }
@@ -75,7 +75,8 @@ async function loadData(accessToken: string) {
     let
         acts: Datum[] = [],
         page = 1,
-        dataError = false;
+        dataError = false,
+        inactiveError = false;
 
     setTimeout(
         () => {
@@ -124,6 +125,7 @@ async function loadData(accessToken: string) {
                 console.error('Error:', err);
                 console.error('Failed requests:', data);
                 dataError = true;
+                inactiveError = data.errors[0].code === 'Inactive';
                 page = MAX_ACTS;
             }
         });
@@ -133,7 +135,9 @@ async function loadData(accessToken: string) {
     }
     
     setStatus(
-        dataError
+        inactiveError
+            ? `Your data can't be loaded due to <a class="load__link" href="https://techcrunch.com/2026/06/01/strava-declares-war-on-scrapers-ahead-of-ipo/> the ongoing death of the open internet </a>"`
+            : dataError
             ? "Your data can't be loaded due to an issue with the Strava API"
             : acts.length + ' activites loaded successfully'
     );

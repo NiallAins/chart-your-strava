@@ -257,7 +257,7 @@ body {
 
 .load {
     display: flex;
-    max-width: 15rem;
+    max-width: 17rem;
     flex-direction: column;
     gap: $w-pad-lg;
     align-items: center;
@@ -284,6 +284,20 @@ body {
         text-align: center;
         margin: $w-pad-lg $w-pad-md;
         font-size: $f-size-lg;
-        line-height: $f-size-lg;
+        line-height: 1.25;
+    }
+
+    &__link {
+        color: $c-text;
+        text-decoration: underline;
+        text-decoration-color: $c-accent;
+        text-underline-offset: 0.125rem;
+        text-decoration-thickness: 3px;
+
+        &:hover {
+            background: $c-accent;
+            text-decoration: none;
+            padding-bottom: 0.125rem;
+        }
     }
 }
