@@ -63,9 +63,6 @@ export function render(parentEl: HTMLElement, parentElW: number, parentElH: numb
         CTX.globalAlpha = 0.3;
         CTX_OVERLAY.fillStyle = 'orangered';
 
-        CTX.scale(zoomFactor, zoomFactor);
-        CTX_OVERLAY.scale(zoomFactor, zoomFactor);
-
         if (DIFF_X < DIFF_Y) {
             CTX.translate((parentElW - (DIFF_X * SCALE)) * 0.5, 0);
             CTX_OVERLAY.translate((parentElW - (DIFF_X * SCALE)) * 0.5, 0);
@@ -73,6 +70,10 @@ export function render(parentEl: HTMLElement, parentElW: number, parentElH: numb
             CTX.translate(0, (parentElH - (DIFF_Y * SCALE)) * 0.5);
             CTX_OVERLAY.translate(0, (parentElH - (DIFF_Y * SCALE)) * 0.5);
         }
+
+        CTX.scale(zoomFactor, zoomFactor);
+        CTX_OVERLAY.scale(zoomFactor, zoomFactor);
+        
         animatePath(SCALED_PATH, CTX, CTX_OVERLAY, Math.round(PATH.length / TARGET_FRAMES));
     };
     
@@ -87,8 +88,8 @@ export function render(parentEl: HTMLElement, parentElW: number, parentElH: numb
     EL_BUTTON_ZOOM_IN.innerHTML = 'Zoom &plus;';
     EL_BUTTON_ANIMATE.innerHTML = 'Toggle animation';
 
-    EL_BUTTON_ZOOM_OUT.onclick = () => { zoomFactor -= 0.5; animate() };
-    EL_BUTTON_ZOOM_IN.onclick = () => { zoomFactor += 0.5; animate() };
+    EL_BUTTON_ZOOM_OUT.onclick = () => { zoomFactor /= 1.5; animate() };
+    EL_BUTTON_ZOOM_IN.onclick = () => { zoomFactor *= 1.5; animate() };
     EL_BUTTON_ANIMATE.onclick = () => { isAnimated = !isAnimated; animate(); }
     
     EL_BUTTON_CONTAINER.appendChild(EL_BUTTON_ANIMATE);
@@ -109,13 +110,11 @@ function getPathRange(
         AVG_Y = path.reduce((sum, p) => sum + p[1], 0) / path.length,
         MAX_RANGE = 0.125;
 
-    path = path.filter(p => Math.abs(p[0] - AVG_X) < MAX_RANGE && Math.abs(p[1] - AVG_Y) < MAX_RANGE);
-
     const
-        MIN_X = path.reduce((min, p) => Math.min(min, p[0]), Infinity),
-        DIFF_X = path.reduce((max, p) => Math.max(max, p[0]), -Infinity) - MIN_X,
-        MIN_Y = path.reduce((min, p) => Math.min(min, p[1]), Infinity),
-        DIFF_Y = path.reduce((max, p) => Math.max(max, p[1]), -Infinity) - MIN_Y,
+        MIN_X = AVG_X - MAX_RANGE,
+        DIFF_X = MAX_RANGE * 2,
+        MIN_Y = AVG_Y - MAX_RANGE,
+        DIFF_Y = MAX_RANGE * 2,
         SCALE = Math.min(canW, canH) / Math.max(DIFF_X, DIFF_Y);
 
     return [MIN_X, MIN_Y, DIFF_X, DIFF_Y, SCALE];
