@@ -40,7 +40,7 @@ async function attemptLoadData(attemptAfterFetch: boolean = false) {
     } else {
         setTimeout(
             () => setStatus("Your data can't be loaded due to a permissions issue with your Strava account"),
-            1000
+            3000
         );
     }
 }
@@ -136,7 +136,7 @@ async function loadData(accessToken: string) {
     
     setStatus(
         inactiveError
-            ? `Your data can't be loaded due to <a class="load__link" href="https://techcrunch.com/2026/06/01/strava-declares-war-on-scrapers-ahead-of-ipo/> the ongoing death of the open internet </a>"`
+            ? `Your data can't be loaded due to <a class="load__link" href="https://techcrunch.com/2026/06/01/strava-declares-war-on-scrapers-ahead-of-ipo"/> the ongoing death of the open internet </a>`
             : dataError
             ? "Your data can't be loaded due to an issue with the Strava API"
             : acts.length + ' activites loaded successfully'
