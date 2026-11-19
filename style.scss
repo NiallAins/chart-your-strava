@@ -24,6 +24,27 @@ $f-size-lg: 1rem;
     outline-offset: $w-border * 2;
 }
 
+@mixin button {
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    background: none;
+    border: 1px solid $c-border;
+    padding: $w-pad-sm $w-pad-lg;
+    
+    &:hover {
+        border-color: $c-accent;
+        box-shadow:
+            inset 0 0 0 1px $c-accent,
+            0 0 0 1px $c-accent;
+        cursor: pointer;
+    }
+
+    &:focus-visible {
+        @include outline;
+    }
+}
+
 
 //
 // Page
@@ -252,6 +273,32 @@ body {
 
 
 //
+// Map
+//
+
+.map {
+    position: relative;
+
+    &__canvas {
+        position: absolute;
+        inset: 0;
+    }
+
+    &__buttons {
+        position: absolute;
+        top: $w-pad-md; 
+        left: $w-pad-md;
+        display: flex;
+        gap: $w-pad-lg;
+
+        &-button {
+            @include button;
+        }
+    }
+}
+
+
+//
 // Load
 //
 
@@ -263,21 +310,8 @@ body {
     align-items: center;
 
     &__button {
-        color: inherit;
-        font-size: inherit;
-        font-family: inherit;
-        background: none;
-        border: 1px solid $c-border;
-        padding: $w-pad-sm $w-pad-lg;
+        @include button;
         margin-top: $w-pad-lg;
-
-        &:hover {
-            border-color: $c-accent;
-            box-shadow:
-                inset 0 0 0 1px $c-accent,
-                0 0 0 1px $c-accent;
-            cursor: pointer;
-        }
     }
 
     &__status {

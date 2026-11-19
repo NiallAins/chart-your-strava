@@ -39,6 +39,13 @@ export type Bar = {
     c: string
 };
 
+export enum Tab {
+    Routes,
+    Charts,
+    Map,
+    Load
+}
+
 export enum ActivityType {
     'Run',
     'Swim',

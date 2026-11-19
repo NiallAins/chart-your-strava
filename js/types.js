@@ -1,3 +1,10 @@
+export var Tab;
+(function (Tab) {
+    Tab[Tab["Routes"] = 0] = "Routes";
+    Tab[Tab["Charts"] = 1] = "Charts";
+    Tab[Tab["Map"] = 2] = "Map";
+    Tab[Tab["Load"] = 3] = "Load";
+})(Tab || (Tab = {}));
 export var ActivityType;
 (function (ActivityType) {
     ActivityType[ActivityType["Run"] = 0] = "Run";

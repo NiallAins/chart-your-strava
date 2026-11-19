@@ -84,7 +84,7 @@ async function loadData(accessToken: string) {
                 setStatus(`0 activites loaded...`)
             }
         },
-        500
+        1000
     );
     
     while (page <= MAX_ACTS / PER_PAGE) {

@@ -26,9 +26,9 @@ export function getIntensityLimits(data: Datum[]): [number, number] {
         );
 }
 
-export function getDataColor(p: Datum, intensityLimits: [number, number]): string {
+export function getDataColor(d: Datum, intensityLimits: [number, number]): string {
     const I =
-        (getIntensity(p) - intensityLimits[0]) /
+        (getIntensity(d) - intensityLimits[0]) /
         (intensityLimits[1] - intensityLimits[0]);
     return `rgb(${ Math.floor(255 * I) }, 0, ${ Math.floor(255 * (1 - I)) })`;
 }

@@ -2,24 +2,20 @@ import { loadData } from './data.js';
 import { Datum } from './types.js';
 import { decodePath, getDataColor, getIntensityLimits } from './util.js';
 
-export function render(parentEl: HTMLElement) {
+export function render(parentEl: HTMLElement, parentElW: number, parentElH: number) {
     parentEl.innerHTML = '';
-
-    const
-        W = parentEl.clientWidth,
-        H = parentEl.clientHeight;
     
     let
         data = loadData().filter(d => d.p),
-        dim = Math.ceil(1 + Math.sqrt(data.length / (H / W)));
+        dim = Math.ceil(1 + Math.sqrt(data.length / (parentElH / parentElW)));
     
     const INTENSITY_LIMITS = getIntensityLimits(data);
 
     data.forEach(d => parentEl.appendChild(
         getPathCanvas(
             d,
-            Math.floor((W / dim) - 2),
-            Math.floor((H / Math.ceil(data.length / dim)) - 2),
+            Math.floor((parentElW / dim) - 2),
+            Math.floor((parentElH / Math.ceil(data.length / dim)) - 2),
             INTENSITY_LIMITS
         ))
     );

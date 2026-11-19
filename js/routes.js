@@ -1,11 +1,10 @@
 import { loadData } from './data.js';
 import { decodePath, getDataColor, getIntensityLimits } from './util.js';
-export function render(parentEl) {
+export function render(parentEl, parentElW, parentElH) {
     parentEl.innerHTML = '';
-    const W = parentEl.clientWidth, H = parentEl.clientHeight;
-    let data = loadData().filter(d => d.p), dim = Math.ceil(1 + Math.sqrt(data.length / (H / W)));
+    let data = loadData().filter(d => d.p), dim = Math.ceil(1 + Math.sqrt(data.length / (parentElH / parentElW)));
     const INTENSITY_LIMITS = getIntensityLimits(data);
-    data.forEach(d => parentEl.appendChild(getPathCanvas(d, Math.floor((W / dim) - 2), Math.floor((H / Math.ceil(data.length / dim)) - 2), INTENSITY_LIMITS)));
+    data.forEach(d => parentEl.appendChild(getPathCanvas(d, Math.floor((parentElW / dim) - 2), Math.floor((parentElH / Math.ceil(data.length / dim)) - 2), INTENSITY_LIMITS)));
 }
 function getPathCanvas(d, w, h, colorLimits) {
     const CAN = document.createElement('canvas'), CTX = CAN.getContext('2d'), PATH = decodePath(d.p).map(p => [p[0], p[1] * -1]), MIN_X = PATH.reduce((min, p) => Math.min(min, p[0]), Infinity), X_DIFF = PATH.reduce((max, p) => Math.max(max, p[0]), -Infinity) - MIN_X, MIN_Y = PATH.reduce((min, p) => Math.min(min, p[1]), Infinity), Y_DIFF = PATH.reduce((max, p) => Math.max(max, p[1]), -Infinity) - MIN_Y, SCALE = Math.min(w, h) / Math.max(X_DIFF, Y_DIFF);

@@ -15,8 +15,8 @@ export function getIntensityLimits(data) {
         Math.max(lim[1], getIntensity(d))
     ], [Infinity, -Infinity]);
 }
-export function getDataColor(p, intensityLimits) {
-    const I = (getIntensity(p) - intensityLimits[0]) /
+export function getDataColor(d, intensityLimits) {
+    const I = (getIntensity(d) - intensityLimits[0]) /
         (intensityLimits[1] - intensityLimits[0]);
     return `rgb(${Math.floor(255 * I)}, 0, ${Math.floor(255 * (1 - I))})`;
 }

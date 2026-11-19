@@ -50,7 +50,7 @@ async function loadData(accessToken) {
         if (acts.length == 0 && !dataError) {
             setStatus(`0 activites loaded...`);
         }
-    }, 500);
+    }, 1000);
     while (page <= MAX_ACTS / PER_PAGE) {
         await fetch('https://www.strava.com/api/v3/athlete/activities?' +
             '&per_page=' + PER_PAGE +

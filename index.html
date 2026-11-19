@@ -37,6 +37,14 @@
             Charts
         </button>
         <button
+            id="tabButton_map"
+            class="tabs__tab"
+            role="tab"
+            aria-controls="tabBody_map"
+        >
+            Heatmap
+        </button>
+        <button
             id="tabButton_load"
             class="tabs__tab"
             role="tab"
@@ -59,6 +67,13 @@
         role="tabpanel"
         tabindex="0"
         aria-labelledby="tabButton_charts"
+    ></div>
+    <div
+        id="tabBody_map"
+        class="tabs__body map"
+        role="tabpanel"
+        tabindex="0"
+        aria-labelledby="tabButton_map"
     ></div>
     <div
         id="tabBody_load"
